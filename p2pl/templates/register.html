@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Smart Road Monitor{% endblock %}
+
+{% block content %}
+<section class="section-padding">
+    <div class="container">
+        <div class="form-container" style="max-width: 600px;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <i class="fas fa-user-plus" style="font-size: 3rem; color: var(--secondary-green);"></i>
+                <h1>Create Your Account</h1>
+                <p>Join our community to report road issues and track improvements</p>
+            </div>
+            
+            <form action="{{ url_for('register') }}" method="post">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-user"></i> Full Name
+                    </label>
+                    <input type="text" class="form-control" name="full_name" placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-user-tag"></i> Username
+                    </label>
+                    <input type="text" class="form-control" name="username" placeholder="Choose a username" required>
+                    <small style="display: block; margin-top: 0.5rem; color: #666;">This will be displayed on your reports</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-envelope"></i> Email Address
+                    </label>
+                    <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" class="form-control" name="password" placeholder="Create password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i> Confirm Password
+                        </label>
+                        <input type="password" class="form-control" name="confirm_password" placeholder="Confirm password" required>
+                    </div>
+                </div>
+                
+                <div style="background-color: rgba(42, 157, 143, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
+                    <h4 style="margin-top: 0; color: var(--secondary-green);">
+                        <i class="fas fa-shield-alt"></i> Account Security
+                    </h4>
+                    <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        <i class="fas fa-check-circle" style="color: var(--secondary-green);"></i>
+                        Your password must contain at least:
+                    </p>
+                    <ul style="margin: 0; padding-left: 1.5rem; font-size: 0.9rem;">
+                        <li>8 characters minimum</li>
+                        <li>1 uppercase letter</li>
+                        <li>1 lowercase letter</li>
+                        <li>1 number</li>
+                    </ul>
+                </div>
+                
+                <div style="margin: 1.5rem 0; padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">
+                        I agree to the <a href="#" style="color: var(--primary-blue);">Terms of Service</a> and <a href="#" style="color: var(--primary-blue);">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+                
+                <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
+                    <p style="margin-bottom: 1rem;">Already have an account?</p>
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary">
+                        <i class="fas fa-sign-in-alt"></i> Login to Existing Account
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Benefits -->
+        <div style="margin-top: 3rem;">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-dark);">
+                Benefits of Creating an Account
+            </h2>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-content">
+                        <h3 style="color: var(--primary-blue);">
+                            <i class="fas fa-history"></i> Track Your Reports
+                        </h3>
+                        <p>Monitor the status of all your submitted reports, from initial submission to final resolution.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-content">
+                        <h3 style="color: var(--primary-blue);">
+                            <i class="fas fa-bell"></i> Receive Updates
+                        </h3>
+                        <p>Get notified when your reported issues are assigned, in progress, or resolved.</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-content">
+                        <h3 style="color: var(--primary-blue);">
+                            <i class="fas fa-chart-line"></i> Contribution History
+                        </h3>
+                        <p>View statistics on your contributions and see how you're helping improve road safety.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

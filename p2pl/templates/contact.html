@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Smart Road Monitor{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" style="padding: 3rem 0;">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Contact Us</h1>
+            <p>Get in touch with our team for support, partnership opportunities, or media inquiries</p>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section-padding">
+    <div class="container">
+        <div class="card-grid">
+            <!-- Contact Form -->
+            <div class="card">
+                <div class="card-content">
+                    <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
+                        <i class="fas fa-envelope" style="color: var(--secondary-green); margin-right: 10px;"></i>
+                        Send Us a Message
+                    </h2>
+                    
+                    <form method="post" action="{{ url_for('contact') }}">
+                        <div class="form-group">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Subject</label>
+                            <select class="form-control" name="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="support">Technical Support</option>
+                                <option value="report">Report an Issue</option>
+                                <option value="partnership">Partnership Inquiry</option>
+                                <option value="media">Media Inquiry</option>
+                                <option value="general">General Question</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-control" name="message" rows="5" required></textarea>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Send Message
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> Clear Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="card">
+                <div class="card-content">
+                    <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
+                        <i class="fas fa-info-circle" style="color: var(--primary-blue); margin-right: 10px;"></i>
+                        Contact Information
+                    </h2>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">
+                            <i class="fas fa-building"></i> Headquarters
+                        </h3>
+                        <p>
+                            <i class="fas fa-map-marker-alt" style="color: var(--accent-red); width: 20px;"></i>
+                            123 Smart City Boulevard<br>
+                            Innovation District<br>
+                            Tech City, TC 10001
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">
+                            <i class="fas fa-phone"></i> Contact Numbers
+                        </h3>
+                        <p>
+                            <strong>General Inquiries:</strong><br>
+                            <i class="fas fa-phone-alt" style="color: var(--secondary-green);"></i> +1 (555) 123-4567
+                        </p>
+                        <p>
+                            <strong>Technical Support:</strong><br>
+                            <i class="fas fa-headset" style="color: var(--secondary-green);"></i> +1 (555) 987-6543
+                        </p>
+                        <p>
+                            <strong>Emergency Hotline:</strong><br>
+                            <i class="fas fa-exclamation-triangle" style="color: var(--accent-red);"></i> +1 (555) 911-9111
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">
+                            <i class="fas fa-envelope-open-text"></i> Email Addresses
+                        </h3>
+                        <p>
+                            <strong>General:</strong> info@smartroadmonitor.com<br>
+                            <strong>Support:</strong> support@smartroadmonitor.com<br>
+                            <strong>Partnerships:</strong> partners@smartroadmonitor.com<br>
+                            <strong>Media:</strong> media@smartroadmonitor.com
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Departments -->
+        <div style="margin-top: 3rem;">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark); text-align: center;">
+                Departments
+            </h2>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-content">
+                        <h3 style="color: var(--primary-blue);">
+                            <i class="fas fa-cogs"></i> Technical Support
+                        </h3>
+                        <p>For technical issues, bug reports, or feature requests related to the Smart Road Monitor system.</p>
+                        <p><strong>Hours:</strong> 24/7</p>
+                        <p><strong>Response Time:</strong> Within 2 hours</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-content">
+                        <h3 style="color: var(--primary-blue);">
+                            <i class="fas fa-road"></i> Road Maintenance
+                        </h3>
+                        <p>For reporting urgent road hazards or coordinating maintenance activities with local authorities.</p>
+                        <p><strong>Hours:</strong> 6 AM - 10 PM daily</p>
+                        <p><strong>Emergency:</strong> Always available</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-content">
+                        <h3 style="color: var(--primary-blue);">
+                            <i class="fas fa-handshake"></i> Partnerships
+                        </h3>
+                        <p>For municipalities, transportation departments, or companies interested in implementing our system.</p>
+                        <p><strong>Hours:</strong> 9 AM - 5 PM weekdays</p>
+                        <p><strong>Contact:</strong> partners@smartroadmonitor.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ -->
+        <div style="margin-top: 4rem;">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark); text-align: center;">
+                Frequently Asked Questions
+            </h2>
+            
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="card-content">
+                    <h3 style="color: var(--primary-blue); cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+                        <i class="fas fa-question-circle"></i> How do I report a road issue?
+                    </h3>
+                    <div style="display: block;">
+                        <p>You can report road issues through our web portal by clicking "Report Issue" in the navigation menu. You'll need to provide location details (latitude/longitude or address), describe the issue, and optionally upload photos. The system will guide you through the process step by step.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="card-content">
+                    <h3 style="color: var(--primary-blue); cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+                        <i class="fas fa-question-circle"></i> How accurate is the AI detection system?
+                    </h3>
+                    <div style="display: block;">
+                        <p>Our AI detection system has an accuracy rate of 94% for potholes and 92% for road cracks. The system continuously learns and improves from new data. All AI detections are verified by our system before being added to the map.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="card-content">
+                    <h3 style="color: var(--primary-blue); cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+                        <i class="fas fa-question-circle"></i> What happens after I submit a report?
+                    </h3>
+                    <div style="display: block;">
+                        <p>Once you submit a report, it is immediately added to our system and appears on the public map. Our team reviews the report within 24 hours, assigns a priority level, and forwards it to the appropriate maintenance department. You can track the status of your report on our website.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="card-content">
+                    <h3 style="color: var(--primary-blue); cursor: pointer;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+                        <i class="fas fa-question-circle"></i> Can I report issues anonymously?
+                    </h3>
+                    <div style="display: block;">
+                        <p>Yes, you can report issues without creating an account. However, creating an account allows you to track the status of your reports and receive updates on their resolution. All personal information is kept confidential and never shared publicly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

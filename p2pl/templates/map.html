@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Live Road Map - Smart Road Monitor{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" style="padding: 3rem 0;">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Live Road Condition Map</h1>
+            <p>Real-time monitoring of road conditions with AI-powered detection and citizen reports</p>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="section-padding">
+    <div class="container">
+        <!-- Live Status -->
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding: 10px 15px; background: rgba(42, 157, 143, 0.1); border-radius: 8px;">
+            <div style="width: 10px; height: 10px; background: #28a745; border-radius: 50%;"></div>
+            <span><strong>Live Data:</strong> Updated {{ current_time.strftime('%I:%M %p') }} • {{ reports|length }} active issues on map</span>
+        </div>
+        
+        <!-- Map Legend -->
+        <div class="map-legend">
+            <div class="legend-item">
+                <div class="legend-color legend-red"></div>
+                <span>High Priority (Dangerous potholes, deep cracks)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-yellow"></div>
+                <span>Medium Priority (Moderate damage)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-green"></div>
+                <span>Low Priority (Minor issues, safe roads)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-blue"></div>
+                <span>Your Location</span>
+            </div>
+        </div>
+        
+        <!-- Map Container -->
+        <div class="map-container">
+            <div class="map-placeholder">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>Interactive Road Map</h3>
+                <p>Showing {{ reports|length }} road issues in the area</p>
+                
+                {% if reports %}
+                <div style="margin-top: 2rem; text-align: left; max-width: 500px;">
+                    <h4>Road Issues in This Area:</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        {% for report in reports[:5] %}
+                        <li style="margin-bottom: 1rem; padding: 1rem; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <strong style="text-transform: capitalize;">{{ report.issue_type.replace('_', ' ') }}</strong>
+                                    <span class="priority-badge priority-{{ report.severity }}" style="margin-left: 10px;">
+                                        {{ report.severity|upper }}
+                                    </span>
+                                </div>
+                                <span class="status-badge badge-{{ report.status.replace(' ', '-') }}">
+                                    {{ report.status|title }}
+                                </span>
+                            </div>
+                            <p style="margin: 0.5rem 0; color: #666;">
+                                <i class="fas fa-map-marker-alt"></i> {{ report.address[:50] }}{% if report.address|length > 50 %}...{% endif %}
+                            </p>
+                            <p style="margin: 0; font-size: 0.9rem; color: #999;">
+                                Reported: {{ report.created_at.strftime('%b %d, %Y') }}
+                            </p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% if reports|length > 5 %}
+                    <p style="text-align: center; margin-top: 1rem;">
+                        <em>... and {{ reports|length - 5 }} more issues</em>
+                    </p>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div style="margin-top: 2rem;">
+                    <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--secondary-green);"></i>
+                    <h4>All Roads Clear!</h4>
+                    <p>No reported issues in this area. Roads are in good condition.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Statistics Panel -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
+            <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--accent-red);">
+                <h3 style="color: var(--accent-red); font-size: 2rem; margin: 0;">
+                    {{ reports|selectattr('severity', 'equalto', 'high')|list|length }}
+                </h3>
+                <p style="margin: 0.5rem 0 0; font-weight: 600;">High Priority Issues</p>
+                <p style="font-size: 0.9rem; color: #666; margin: 5px 0 0;">Needs immediate attention</p>
+            </div>
+            
+            <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--accent-yellow);">
+                <h3 style="color: var(--accent-yellow); font-size: 2rem; margin: 0;">
+                    {{ reports|selectattr('severity', 'equalto', 'medium')|list|length }}
+                </h3>
+                <p style="margin: 0.5rem 0 0; font-weight: 600;">Medium Priority Issues</p>
+                <p style="font-size: 0.9rem; color: #666; margin: 5px 0 0;">Schedule within 48 hours</p>
+            </div>
+            
+            <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--secondary-green);">
+                <h3 style="color: var(--secondary-green); font-size: 2rem; margin: 0;">
+                    {{ reports|selectattr('severity', 'equalto', 'low')|list|length }}
+                </h3>
+                <p style="margin: 0.5rem 0 0; font-weight: 600;">Low Priority Issues</p>
+                <p style="font-size: 0.9rem; color: #666; margin: 5px 0 0;">Monitor for changes</p>
+            </div>
+            
+            <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary-blue);">
+                <h3 style="color: var(--primary-blue); font-size: 2rem; margin: 0;">
+                    {{ (reports|length / 100 * 100)|round|int }}%
+                </h3>
+                <p style="margin: 0.5rem 0 0; font-weight: 600;">Roads in Good Condition</p>
+                <p style="font-size: 0.9rem; color: #666; margin: 5px 0 0;">Based on current monitoring</p>
+            </div>
+        </div>
+        
+        <!-- Action Cards -->
+        <div class="card-grid" style="margin-top: 2rem;">
+            <div class="card">
+                <div class="card-content">
+                    <h3><i class="fas fa-info-circle" style="color: var(--secondary-green); margin-right: 10px;"></i> How to Use This Map</h3>
+                    <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                        <li>Each marker represents a reported road issue</li>
+                        <li>Colors indicate priority level (Red = High, Yellow = Medium, Green = Low)</li>
+                        <li>Click on issues in the list to view details</li>
+                        <li>Report new issues using the button below</li>
+                        <li>Map updates automatically with new reports</li>
+                    </ul>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <a href="{{ url_for('report') }}" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i> Report New Issue
+                        </a>
+                        <form action="{{ url_for('map_page') }}" method="get" style="display: inline;">
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-sync-alt"></i> Refresh Map
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-content">
+                    <h3><i class="fas fa-filter" style="color: var(--secondary-green); margin-right: 10px;"></i> Filter Issues</h3>
+                    <form action="{{ url_for('map_page') }}" method="get" style="margin-top: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Priority Level</label>
+                            <select name="priority" class="form-control">
+                                <option value="">All Priorities</option>
+                                <option value="high">High Priority</option>
+                                <option value="medium">Medium Priority</option>
+                                <option value="low">Low Priority</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Issue Type</label>
+                            <select name="type" class="form-control">
+                                <option value="">All Types</option>
+                                <option value="pothole">Pothole</option>
+                                <option value="crack">Crack</option>
+                                <option value="speed_hump">Speed Hump</option>
+                                <option value="debris">Debris</option>
+                                <option value="flooding">Flooding</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-control">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="assigned">Assigned</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="resolved">Resolved</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- All Reports Table -->
+        <div style="margin-top: 3rem;">
+            <h3 style="margin-bottom: 1.5rem;">All Road Issues ({{ reports|length }})</h3>
+            
+            {% if reports %}
+            <div style="overflow-x: auto;">
+                <table class="reports-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Reported</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td>#{{ report._id[:8] }}</td>
+                            <td style="text-transform: capitalize;">{{ report.issue_type.replace('_', ' ') }}</td>
+                            <td>{{ report.address[:30] }}{% if report.address|length > 30 %}...{% endif %}</td>
+                            <td>
+                                <span class="priority-badge priority-{{ report.severity }}">
+                                    {{ report.severity|upper }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status-badge badge-{{ report.status.replace(' ', '-') }}">
+                                    {{ report.status|title }}
+                                </span>
+                            </td>
+                            <td>{{ report.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <a href="{{ url_for('view_report', report_id=report._id) }}" class="btn btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 3rem; background: white; border-radius: 10px; box-shadow: var(--card-shadow);">
+                <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--secondary-green);"></i>
+                <h3>No Issues Found</h3>
+                <p>There are no road issues matching your criteria.</p>
+                <a href="{{ url_for('map_page') }}" class="btn btn-primary" style="margin-top: 1rem;">
+                    <i class="fas fa-redo"></i> Clear Filters
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

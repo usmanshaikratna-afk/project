@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Smart Road Monitor{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<section class="hero" style="padding: 2rem 0;">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Authority Dashboard</h1>
+            <p>Monitor and manage road condition reports</p>
+            <p style="margin-top: 1rem; opacity: 0.9;">
+                <i class="fas fa-user-shield"></i> Logged in as: {{ user.username }} ({{ user.role|title }})
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Dashboard Stats -->
+<section class="section-padding">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));">
+                <span class="stat-number">{{ stats.total_reports }}</span>
+                <span class="stat-label">Total Reports</span>
+            </div>
+            
+            <div class="stat-card" style="background: linear-gradient(135deg, #ffc107, #ff9800);">
+                <span class="stat-number">{{ stats.pending_reports }}</span>
+                <span class="stat-label">Pending Issues</span>
+            </div>
+            
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--secondary-green), #1e7d73);">
+                <span class="stat-number">{{ stats.resolved_today }}</span>
+                <span class="stat-label">Resolved Today</span>
+            </div>
+            
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--accent-red), #c53030);">
+                <span class="stat-number">{{ stats.high_priority }}</span>
+                <span class="stat-label">High Priority</span>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+            <a href="{{ url_for('camera_live') }}" class="btn btn-primary">
+                <i class="fas fa-camera"></i> Live Camera Feed
+            </a>
+            <a href="{{ url_for('map_page') }}" class="btn btn-secondary">
+                <i class="fas fa-map"></i> View Live Map
+            </a>
+            <a href="#reports" class="btn btn-secondary">
+                <i class="fas fa-list"></i> Manage Reports
+            </a>
+            <a href="#teams" class="btn btn-secondary">
+                <i class="fas fa-users"></i> Team Management
+            </a>
+        </div>
+        
+        <!-- Reports Section -->
+        <div id="reports" style="margin-top: 3rem;">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
+                <i class="fas fa-exclamation-triangle" style="color: var(--accent-red); margin-right: 10px;"></i>
+                Recent Reports
+            </h2>
+            
+            {% if reports %}
+            <div style="overflow-x: auto;">
+                <table class="reports-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Reported</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td>#{{ report._id[:8] }}</td>
+                            <td style="text-transform: capitalize;">{{ report.issue_type.replace('_', ' ') }}</td>
+                            <td>{{ report.address[:30] }}{% if report.address|length > 30 %}...{% endif %}</td>
+                            <td>
+                                <span class="priority-badge priority-{{ report.severity }}">
+                                    {{ report.severity|upper }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status-badge badge-{{ report.status.replace(' ', '-') }}">
+                                    {{ report.status|title }}
+                                </span>
+                            </td>
+                            <td>{{ report.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <div style="display: flex; gap: 5px;">
+                                    <a href="{{ url_for('view_report', report_id=report._id) }}" class="btn btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    
+                                    <!-- Update Status Form -->
+                                    <form action="{{ url_for('update_report', report_id=report._id) }}" method="post" style="display: inline;">
+                                        <input type="hidden" name="status" value="assigned">
+                                        <button type="submit" class="btn btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background: var(--primary-blue); color: white;">
+                                            <i class="fas fa-user-check"></i>
+                                        </button>
+                                    </form>
+                                    
+                                    <!-- Mark as Resolved Form -->
+                                    <form action="{{ url_for('update_report', report_id=report._id) }}" method="post" style="display: inline;">
+                                        <input type="hidden" name="status" value="resolved">
+                                        <button type="submit" class="btn btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background: var(--secondary-green); color: white;">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="{{ url_for('map_page') }}" class="btn btn-primary">
+                    <i class="fas fa-external-link-alt"></i> View All Reports on Map
+                </a>
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 3rem; background: white; border-radius: 10px; box-shadow: var(--card-shadow);">
+                <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--secondary-green);"></i>
+                <h3>No Reports to Manage</h3>
+                <p>All reports have been processed. Great work!</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Maintenance Teams -->
+        <div id="teams" style="margin-top: 4rem;">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
+                <i class="fas fa-users" style="color: var(--primary-blue); margin-right: 10px;"></i>
+                Maintenance Teams
+            </h2>
+            
+            {% if teams %}
+            <div class="card-grid">
+                {% for team in teams %}
+                <div class="card">
+                    <div class="card-content">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <h3 style="margin: 0;">{{ team.name }}</h3>
+                            <span class="status-badge" style="background: {% if team.status == 'available' %}#d4edda{% elif team.status == 'busy' %}#fff3cd{% else %}#f8d7da{% endif %}; color: {% if team.status == 'available' %}#155724{% elif team.status == 'busy' %}#856404{% else %}#721c24{% endif %};">
+                                {{ team.status|title }}
+                            </span>
+                        </div>
+                        
+                        <p style="margin-bottom: 1rem;">
+                            <strong>Members:</strong> {{ team.members|join(', ') }}
+                        </p>
+                        
+                        {% if team.current_assignment %}
+                        <p style="margin-bottom: 1rem;">
+                            <strong>Current Assignment:</strong><br>
+                            {{ team.current_assignment }}
+                        </p>
+                        {% endif %}
+                        
+                        {% if team.contact %}
+                        <p style="margin-bottom: 1rem;">
+                            <strong>Contact:</strong> {{ team.contact }}
+                        </p>
+                        {% endif %}
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+                            <button class="btn btn-sm" style="background: var(--primary-blue); color: white;">
+                                <i class="fas fa-phone"></i> Contact
+                            </button>
+                            <button class="btn btn-sm" style="background: var(--secondary-green); color: white;">
+                                <i class="fas fa-tasks"></i> Assign Task
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 2rem; background: white; border-radius: 10px; box-shadow: var(--card-shadow);">
+                <i class="fas fa-users" style="font-size: 3rem; color: var(--primary-blue); margin-bottom: 1rem;"></i>
+                <h3>No Teams Configured</h3>
+                <p>Maintenance teams will appear here once configured in the system.</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- AI Detection Section -->
+        <div style="margin-top: 4rem;">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
+                <i class="fas fa-robot" style="color: var(--secondary-green); margin-right: 10px;"></i>
+                AI Detection System
+            </h2>
+            
+            <div class="card">
+                <div class="card-content">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h3 style="margin-bottom: 1rem;">Upload Image for AI Analysis</h3>
+                            <form action="{{ url_for('detect_defects') }}" method="post" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label class="form-label">Select Image</label>
+                                    <input type="file" class="form-control" name="image" accept="image/*" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Camera ID (Optional)</label>
+                                    <input type="text" class="form-control" name="camera_id" placeholder="e.g., esp32_camera_001">
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Analyze Image
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div>
+                            <h3 style="margin-bottom: 1rem;">Recent Detections</h3>
+                            {% if detections %}
+                            <ul style="list-style: none; padding: 0;">
+                                {% for detection in detections[:5] %}
+                                <li style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 5px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <strong style="text-transform: capitalize;">
+                                            {{ detection.detections[0].type if detection.detections else 'Unknown' }}
+                                        </strong>
+                                        <span style="color: #666; font-size: 0.9em;">
+                                            {{ detection.confidence|float|round(2) }} confidence
+                                        </span>
+                                    </div>
+                                    <div style="margin-top: 0.5rem; font-size: 0.9em; color: #666;">
+                                        {{ detection.timestamp.strftime('%H:%M') }}
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <p style="color: #666; font-style: italic;">No recent detections</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

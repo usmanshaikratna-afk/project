@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Live Camera Feed - Smart Road Monitor{% endblock %}
+
+{% block content %}
+<!-- Camera Header -->
+<section class="hero" style="padding: 2rem 0;">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Live Camera Feed</h1>
+            <p>Real-time monitoring from ESP32 cameras with AI defect detection</p>
+        </div>
+    </div>
+</section>
+
+<!-- Camera Feed Section -->
+<section class="section-padding">
+    <div class="container">
+        <div class="card">
+            <div class="card-content">
+                <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
+                    <i class="fas fa-video" style="color: var(--accent-red); margin-right: 10px;"></i>
+                    Camera Stream
+                </h2>
+                
+                <!-- Camera Selection -->
+                {% if cameras %}
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label class="form-label">Select Camera</label>
+                    <select class="form-control" name="camera_id" onchange="this.form.submit()">
+                        {% for camera in cameras %}
+                        <option value="{{ camera._id }}" {% if request.args.get('camera_id') == camera._id|string %}selected{% endif %}>
+                            {{ camera.name }} - {{ camera.location }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+                
+                <!-- Camera Feed Display -->
+                <div class="camera-feed">
+                    <div class="camera-feed-placeholder">
+                        {% if request.args.get('camera_id') %}
+                        <div>
+                            <i class="fas fa-camera"></i>
+                            <h3>Camera Feed: {{ cameras|selectattr('_id', 'equalto', request.args.get('camera_id'))|first|attr('name') if cameras else 'Selected Camera' }}</h3>
+                            <p>Live stream from ESP32 camera with AI detection</p>
+                            <div class="camera-controls">
+                                <form method="post" action="{{ url_for('detect_defects') }}" enctype="multipart/form-data" style="display: flex; gap: 10px; align-items: center;">
+                                    <input type="hidden" name="camera_id" value="{{ request.args.get('camera_id') or 'default' }}">
+                                    <input type="file" name="image" accept="image/*" required style="flex-grow: 1;">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Detect Defects
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div>
+                            <i class="fas fa-video" style="font-size: 4rem; margin-bottom: 1rem; color: #666;"></i>
+                            <h3>No Camera Selected</h3>
+                            <p>Please select a camera from the dropdown above to view the feed</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Camera Controls -->
+                <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                    <form action="{{ url_for('camera_live') }}" method="get">
+                        <input type="hidden" name="camera_id" value="{{ request.args.get('camera_id') }}">
+                        <input type="hidden" name="action" value="snapshot">
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fas fa-camera"></i> Take Snapshot
+                        </button>
+                    </form>
+                    
+                    <form action="{{ url_for('camera_live') }}" method="get">
+                        <input type="hidden" name="camera_id" value="{{ request.args.get('camera_id') }}">
+                        <input type="hidden" name="action" value="record">
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fas fa-video"></i> Start Recording
+                        </button>
+                    </form>
+                    
+                    <form action="{{ url_for('camera_live') }}" method="get">
+                        <input type="hidden" name="camera_id" value="{{ request.args.get('camera_id') }}">
+                        <input type="hidden" name="action" value="toggle_ai">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-robot"></i> Toggle AI Detection
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Detections -->
+        {% if detections %}
+        <div style="margin-top: 3rem;">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
+                <i class="fas fa-robot" style="color: var(--secondary-green); margin-right: 10px;"></i>
+                Recent AI Detections
+            </h2>
+            
+            <div class="card-grid">
+                {% for detection in detections %}
+                <div class="card">
+                    <div class="card-content">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <h3 style="margin: 0; text-transform: capitalize;">
+                                {{ detection.detections[0].type if detection.detections else 'Unknown' }}
+                            </h3>
+                            <span class="priority-badge" style="background: var({% if detection.confidence > 0.9 %}--accent-red{% elif detection.confidence > 0.7 %}--accent-yellow{% else %}--secondary-green{% endif %}); color: white;">
+                                {{ (detection.confidence * 100)|int }}% confidence
+                            </span>
+                        </div>
+                        
+                        {% if detection.image_url %}
+                        <div style="text-align: center; margin: 1rem 0;">
+                            <img src="{{ detection.image_url }}" alt="Detection" style="max-width: 100%; border-radius: 8px;">
+                        </div>
+                        {% endif %}
+                        
+                        <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.9em; color: #666;">
+                            <span>
+                                <i class="fas fa-camera"></i> {{ detection.camera_id }}
+                            </span>
+                            <span>
+                                <i class="fas fa-clock"></i> {{ detection.timestamp.strftime('%H:%M') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Camera Management -->
+        <div style="margin-top: 4rem;">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">
+                <i class="fas fa-sliders-h" style="color: var(--primary-blue); margin-right: 10px;"></i>
+                Camera Management
+            </h2>
+            
+            <div class="card">
+                <div class="card-content">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h3 style="margin-bottom: 1rem;">Add New Camera</h3>
+                            <form method="post" action="{{ url_for('camera_live') }}">
+                                <div class="form-group">
+                                    <label class="form-label">Camera Name</label>
+                                    <input type="text" class="form-control" name="name" placeholder="e.g., Main Street Camera" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">IP Address</label>
+                                    <input type="text" class="form-control" name="ip" placeholder="e.g., 192.168.1.100" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control" name="location" placeholder="e.g., Main Street & 5th Ave" required>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus-circle"></i> Add Camera
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div>
+                            <h3 style="margin-bottom: 1rem;">Registered Cameras</h3>
+                            {% if cameras %}
+                            <ul style="list-style: none; padding: 0;">
+                                {% for camera in cameras %}
+                                <li style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 5px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <strong>{{ camera.name }}</strong><br>
+                                            <small>{{ camera.location }}</small>
+                                        </div>
+                                        <span style="color: #28a745; font-size: 0.9em;">
+                                            <i class="fas fa-circle" style="font-size: 0.7em;"></i> Online
+                                        </span>
+                                    </div>
+                                    <div style="margin-top: 0.5rem; font-size: 0.9em; color: #666;">
+                                        {{ camera.ip }}
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <p style="color: #666; font-style: italic;">No cameras registered yet</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

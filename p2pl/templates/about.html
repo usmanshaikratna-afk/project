@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}About - Smart Road Monitor{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>About Smart Road Monitor</h1>
+            <p>Revolutionizing road safety through AI-powered monitoring and community engagement</p>
+        </div>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-title">
+            <h2>Our Mission</h2>
+            <p>Making roads safer for everyone through technology and community collaboration</p>
+        </div>
+        
+        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+                Smart Road Monitor is an innovative system that combines artificial intelligence, IoT sensors, and community reporting to detect and address road defects in real-time. Our goal is to reduce accidents, improve road maintenance efficiency, and create safer transportation infrastructure.
+            </p>
+            
+            <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem;">
+                <div style="text-align: center; flex: 1; min-width: 200px;">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--secondary-green), #1e7d73); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <i class="fas fa-bullseye" style="font-size: 2rem; color: white;"></i>
+                    </div>
+                    <h3>Mission</h3>
+                    <p>Leverage AI technology to reduce road-related accidents by 40%</p>
+                </div>
+                
+                <div style="text-align: center; flex: 1; min-width: 200px;">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <i class="fas fa-eye" style="font-size: 2rem; color: white;"></i>
+                    </div>
+                    <h3>Vision</h3>
+                    <p>Create self-monitoring road infrastructure that prevents issues before they become hazards</p>
+                </div>
+                
+                <div style="text-align: center; flex: 1; min-width: 200px;">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent-yellow), #ff9800); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <i class="fas fa-handshake" style="font-size: 2rem; color: white;"></i>
+                    </div>
+                    <h3>Values</h3>
+                    <p>Safety first, innovation always, community engagement, and transparency</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Problem & Solution -->
+<section class="section-padding" style="background-color: rgba(42, 157, 143, 0.05);">
+    <div class="container">
+        <div class="section-title">
+            <h2>The Challenge & Solution</h2>
+            <p>Addressing critical infrastructure issues with smart technology</p>
+        </div>
+        
+        <div class="card-grid">
+            <div class="card" style="border-top: 5px solid var(--accent-red);">
+                <div class="card-content">
+                    <h3 style="color: var(--accent-red);">
+                        <i class="fas fa-exclamation-triangle"></i> The Problem
+                    </h3>
+                    <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                        <li><strong>1.5 million accidents</strong> annually worldwide due to poor roads</li>
+                        <li><strong>$6 billion</strong> in vehicle damage each year</li>
+                        <li><strong>40% longer</strong> emergency response times</li>
+                        <li><strong>Manual inspection</strong> misses 65% of issues</li>
+                        <li><strong>Reactive</strong> rather than preventive maintenance</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card" style="border-top: 5px solid var(--secondary-green);">
+                <div class="card-content">
+                    <h3 style="color: var(--secondary-green);">
+                        <i class="fas fa-lightbulb"></i> Our Solution
+                    </h3>
+                    <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                        <li><strong>Real-time AI detection</strong> of road defects</li>
+                        <li><strong>IoT sensors</strong> on municipal vehicles</li>
+                        <li><strong>Interactive public map</strong> with live updates</li>
+                        <li><strong>Citizen reporting portal</strong> for community engagement</li>
+                        <li><strong>Predictive analytics</strong> for preventive maintenance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Stack -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-title">
+            <h2>Technology Stack</h2>
+            <p>Powered by cutting-edge technologies</p>
+        </div>
+        
+        <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin-top: 2rem;">
+            <div style="text-align: center;">
+                <i class="fas fa-robot" style="font-size: 3rem; color: var(--secondary-green); margin-bottom: 1rem;"></i>
+                <h3>AI & Computer Vision</h3>
+                <p>TensorFlow, OpenCV for defect detection</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <i class="fas fa-satellite" style="font-size: 3rem; color: var(--secondary-green); margin-bottom: 1rem;"></i>
+                <h3>IoT Sensors</h3>
+                <p>ESP32 cameras, vibration sensors</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <i class="fas fa-map-marked-alt" style="font-size: 3rem; color: var(--secondary-green); margin-bottom: 1rem;"></i>
+                <h3>Geospatial Mapping</h3>
+                <p>MongoDB Geospatial, Map visualization</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <i class="fas fa-cloud" style="font-size: 3rem; color: var(--secondary-green); margin-bottom: 1rem;"></i>
+                <h3>Cloud Infrastructure</h3>
+                <p>Flask, MongoDB Atlas, Python</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="section-padding" style="background-color: rgba(30, 61, 143, 0.05);">
+    <div class="container">
+        <div class="section-title">
+            <h2>How It Works</h2>
+            <p>From detection to resolution - our complete workflow</p>
+        </div>
+        
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <!-- Step 1 -->
+                <div style="display: flex; gap: 2rem; align-items: center;">
+                    <div style="width: 60px; height: 60px; background: var(--secondary-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; flex-shrink: 0;">
+                        1
+                    </div>
+                    <div>
+                        <h3>Data Collection</h3>
+                        <p>IoT sensors on vehicles collect road condition data including vibrations, GPS location, and high-resolution images.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div style="display: flex; gap: 2rem; align-items: center;">
+                    <div style="width: 60px; height: 60px; background: var(--secondary-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; flex-shrink: 0;">
+                        2
+                    </div>
+                    <div>
+                        <h3>AI Processing</h3>
+                        <p>Deep learning models analyze sensor data to identify potholes, cracks, and other defects with high accuracy.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div style="display: flex; gap: 2rem; align-items: center;">
+                    <div style="width: 60px; height: 60px; background: var(--secondary-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; flex-shrink: 0;">
+                        3
+                    </div>
+                    <div>
+                        <h3>Live Mapping</h3>
+                        <p>Detected issues are plotted on an interactive public map with color-coded markers indicating severity levels.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 4 -->
+                <div style="display: flex; gap: 2rem; align-items: center;">
+                    <div style="width: 60px; height: 60px; background: var(--secondary-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; flex-shrink: 0;">
+                        4
+                    </div>
+                    <div>
+                        <h3>Citizen Engagement</h3>
+                        <p>The public can view road conditions, report new issues, and track resolution progress.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 5 -->
+                <div style="display: flex; gap: 2rem; align-items: center;">
+                    <div style="width: 60px; height: 60px; background: var(--secondary-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; flex-shrink: 0;">
+                        5
+                    </div>
+                    <div>
+                        <h3>Resolution Tracking</h3>
+                        <p>Maintenance teams receive prioritized assignments and citizens get updates on fixes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Impact Statistics -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-title">
+            <h2>Our Impact</h2>
+            <p>Transforming road safety across cities</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 3rem;">
+            <div style="background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue)); color: white; padding: 2rem; border-radius: 15px; text-align: center;">
+                <h3 style="font-size: 3rem; margin: 0; color: var(--accent-yellow);">{{ stats.total_reports }}</h3>
+                <p style="margin-top: 0.5rem; opacity: 0.9;">Reports Processed</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, var(--secondary-green), #1e7d73); color: white; padding: 2rem; border-radius: 15px; text-align: center;">
+                <h3 style="font-size: 3rem; margin: 0; color: var(--accent-yellow);">{{ stats.resolved_today }}</h3>
+                <p style="margin-top: 0.5rem; opacity: 0.9;">Issues Resolved Today</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, var(--accent-red), #c53030); color: white; padding: 2rem; border-radius: 15px; text-align: center;">
+                <h3 style="font-size: 3rem; margin: 0; color: var(--accent-yellow);">{{ stats.high_priority }}</h3>
+                <p style="margin-top: 0.5rem; opacity: 0.9;">High Priority Issues</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #ffc107, #ff9800); color: white; padding: 2rem; border-radius: 15px; text-align: center;">
+                <h3 style="font-size: 3rem; margin: 0; color: white;">94%</h3>
+                <p style="margin-top: 0.5rem; opacity: 0.9;">Detection Accuracy</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

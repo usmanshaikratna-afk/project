@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - Smart Road Monitor{% endblock %}
+
+{% block content %}
+<section class="section-padding" style="min-height: 60vh;">
+    <div class="container">
+        <div style="text-align: center; max-width: 600px; margin: 0 auto; padding: 3rem; background: white; border-radius: 15px; box-shadow: var(--card-shadow);">
+            <i class="fas fa-server" style="font-size: 4rem; color: var(--accent-red); margin-bottom: 1rem;"></i>
+            <h1 style="color: var(--primary-dark); margin-bottom: 1rem;">500 - Server Error</h1>
+            <p style="margin-bottom: 1rem; font-size: 1.1rem;">
+                Oops! Something went wrong on our end. Our technical team has been notified and is working to fix the issue.
+            </p>
+            <p style="margin-bottom: 2rem; color: #666;">
+                In the meantime, you can try refreshing the page or navigate back to our homepage.
+            </p>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Go to Homepage
+                </a>
+                <button onclick="window.location.reload()" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> Refresh Page
+                </button>
+            </div>
+            
+            <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee; background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-dark);">
+                    <i class="fas fa-life-ring"></i> Need Immediate Help?
+                </h3>
+                <p style="margin-bottom: 1rem;">For urgent road issues, please contact:</p>
+                <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                    <div style="text-align: center;">
+                        <h4 style="margin: 0; font-size: 1.2rem; color: var(--accent-red);">911</h4>
+                        <p style="margin: 0.5rem 0 0; font-size: 0.9rem;">Emergency Services</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <h4 style="margin: 0; font-size: 1.2rem; color: var(--accent-red);">(555) 123-4567</h4>
+                        <p style="margin: 0.5rem 0 0; font-size: 0.9rem;">Road Maintenance Hotline</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

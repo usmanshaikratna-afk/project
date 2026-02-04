@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Road Monitor{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                        <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <i class="fas fa-road logo-icon"></i>
+                    <span>Smart Road Monitor</span>
+                </a>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>Home</a></li>
+                    <li><a href="{{ url_for('about') }}" {% if request.endpoint == 'about' %}class="active"{% endif %}>About</a></li>
+                    <li><a href="{{ url_for('map_page') }}" {% if request.endpoint == 'map_page' %}class="active"{% endif %}>Live Map</a></li>
+                    <li><a href="{{ url_for('report') }}" {% if request.endpoint == 'report' %}class="active"{% endif %}>Report Issue</a></li>
+                    
+                    {% if user and user.is_authenticated and user.is_authority() %}
+                    <li><a href="{{ url_for('dashboard') }}" {% if request.endpoint == 'dashboard' %}class="active"{% endif %}>Dashboard</a></li>
+                    <li><a href="{{ url_for('camera_live') }}" {% if request.endpoint == 'camera_live' %}class="active"{% endif %}>Live Camera</a></li>
+                    {% endif %}
+                    
+                    <li><a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact' %}class="active"{% endif %}>Contact</a></li>
+                    
+                    {% if user and user.is_authenticated %}
+                    <li class="user-menu">
+                        <a href="#" class="user-dropdown-toggle">
+                            <i class="fas fa-user-circle"></i> {{ user.username }}
+                        </a>
+                        <div class="user-dropdown">
+                            <a href="#"><i class="fas fa-user"></i> Profile</a>
+                            <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li><a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Smart Road Monitor</h3>
+                    <p>AI-powered real-time road condition monitoring system for safer roads.</p>
+                    {% if user and user.is_authenticated %}
+                    <p><small>Logged in as: <strong>{{ user.username }}</strong> ({{ user.role }})</small></p>
+                    {% endif %}
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Home</a></li>
+                        <li><a href="{{ url_for('about') }}">About</a></li>
+                        <li><a href="{{ url_for('map_page') }}">Live Map</a></li>
+                        <li><a href="{{ url_for('report') }}">Report Issue</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Smart City Blvd</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> contact@smartroadmonitor.com</p>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Smart Road Condition Monitoring System. All rights reserved.</p>
+                <p>Version 1.0 | Server-side rendered | No JavaScript required</p>
+            </div>
+        </div>
+    </footer>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

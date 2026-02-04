@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Report Road Issue - Smart Road Monitor{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" style="padding: 3rem 0;">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Report a Road Issue</h1>
+            <p>Help make our roads safer by reporting potholes, cracks, and other hazards. Your report matters.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Report Form -->
+<section class="section-padding">
+    <div class="container">
+        <div class="form-container">
+            <form action="{{ url_for('report') }}" method="post" enctype="multipart/form-data">
+                <h2 style="margin-bottom: 2rem; color: var(--primary-dark);">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--accent-red); margin-right: 10px;"></i>
+                    Report Details
+                </h2>
+                
+                <!-- Location Information -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-map-marker-alt"></i> Location Information
+                    </label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <input type="text" class="form-control" name="latitude" placeholder="Latitude (e.g., 40.7128)" required>
+                            <small style="display: block; margin-top: 0.5rem; color: #666;">Example: 40.7128 for New York</small>
+                        </div>
+                        <div>
+                            <input type="text" class="form-control" name="longitude" placeholder="Longitude (e.g., -74.0060)" required>
+                            <small style="display: block; margin-top: 0.5rem; color: #666;">Example: -74.0060 for New York</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-road"></i> Address or Landmark
+                    </label>
+                    <input type="text" class="form-control" name="address" placeholder="e.g., Main Street near City Hall, Downtown" required>
+                    <small style="display: block; margin-top: 0.5rem; color: #666;">Be as specific as possible about the location</small>
+                </div>
+                
+                <!-- Issue Details -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-cogs"></i> Issue Type
+                    </label>
+                    <select class="form-control" name="issue_type" required>
+                        <option value="">Select the type of issue</option>
+                        <option value="pothole">Pothole</option>
+                        <option value="crack">Crack or Fissure</option>
+                        <option value="speed_hump">Unmarked Speed Hump</option>
+                        <option value="debris">Debris on Road</option>
+                        <option value="flooding">Road Flooding</option>
+                        <option value="signage">Missing/Damaged Signage</option>
+                        <option value="other">Other Issue</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-exclamation"></i> Severity Level
+                    </label>
+                    <div class="severity-options">
+                        <div class="severity-option severity-low">
+                            <input type="radio" id="severityLow" name="severity" value="low" required>
+                            <label for="severityLow">
+                                <i class="fas fa-info-circle"></i><br>
+                                Low Priority<br>
+                                <small>Minor issue</small>
+                            </label>
+                        </div>
+                        
+                        <div class="severity-option severity-medium">
+                            <input type="radio" id="severityMedium" name="severity" value="medium" required>
+                            <label for="severityMedium">
+                                <i class="fas fa-exclamation-triangle"></i><br>
+                                Medium Priority<br>
+                                <small>Needs attention</small>
+                            </label>
+                        </div>
+                        
+                        <div class="severity-option severity-high">
+                            <input type="radio" id="severityHigh" name="severity" value="high" required>
+                            <label for="severityHigh">
+                                <i class="fas fa-exclamation-circle"></i><br>
+                                High Priority<br>
+                                <small>Immediate danger</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Description -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-comment-dots"></i> Description
+                    </label>
+                    <textarea class="form-control" name="description" rows="4" placeholder="Describe the issue in detail (size, depth, exact location on road, any hazards...)" required></textarea>
+                    <small style="display: block; margin-top: 0.5rem; color: #666;">
+                        <i class="fas fa-lightbulb"></i> Tip: Include details like "near the intersection" or "in the right lane"
+                    </small>
+                </div>
+                
+                <!-- Image Upload -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-camera"></i> Upload Photos (Optional but helpful)
+                    </label>
+                    <div class="file-upload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop or click to select photos</p>
+                        <p style="font-size: 0.9rem; color: #666;">JPG, PNG, or GIF • Max 5MB per file</p>
+                        <input type="file" name="images" multiple accept="image/*" style="margin-top: 1rem;">
+                    </div>
+                    <small style="display: block; margin-top: 0.5rem; color: #666;">
+                        Photos help maintenance teams identify and locate the issue faster
+                    </small>
+                </div>
+                
+                <!-- Safety Reminder -->
+                <div style="background-color: rgba(255, 193, 7, 0.1); padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0; border-left: 4px solid var(--accent-yellow);">
+                    <h4 style="margin-top: 0; color: var(--accent-yellow);">
+                        <i class="fas fa-exclamation-triangle"></i> Safety First!
+                    </h4>
+                    <p style="margin-bottom: 0;">
+                        Only report from safe locations. Never put yourself in danger to take photos or inspect road issues.
+                        If the situation is dangerous, contact emergency services immediately.
+                    </p>
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                    <i class="fas fa-paper-plane"></i> Submit Report
+                </button>
+                
+                <!-- Privacy Notice -->
+                <div style="margin-top: 1.5rem; padding: 1rem; background-color: rgba(42, 157, 143, 0.1); border-radius: 8px; text-align: center;">
+                    <p style="margin: 0; font-size: 0.9rem; color: #666;">
+                        <i class="fas fa-shield-alt"></i> Your report will be anonymously added to our public map.
+                        Personal information is kept confidential.
+                    </p>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Tips Section -->
+        <div class="card" style="margin-top: 2rem;">
+            <div class="card-content">
+                <h3><i class="fas fa-lightbulb" style="color: var(--accent-yellow); margin-right: 10px;"></i> Tips for Better Reports</h3>
+                <div class="card-grid" style="margin-top: 1.5rem;">
+                    <div class="card">
+                        <div class="card-content">
+                            <h4><i class="fas fa-camera"></i> Take Clear Photos</h4>
+                            <p>Include objects for scale (shoe, car tire, ruler) and show the entire affected area from multiple angles.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <h4><i class="fas fa-map-pin"></i> Be Specific</h4>
+                            <p>Note exact location like "100m south of intersection" or "in the bike lane near bus stop #42".</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <h4><i class="fas fa-ruler"></i> Measure When Possible</h4>
+                            <p>Estimate size and depth. Example: "Pothole is about 2 feet wide and 6 inches deep."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Emergency Contact -->
+        <div style="background: linear-gradient(135deg, var(--accent-red), #c53030); color: white; padding: 2rem; border-radius: 15px; margin-top: 2rem; text-align: center;">
+            <h3 style="margin-bottom: 1rem;">
+                <i class="fas fa-phone-alt"></i> Need Immediate Help?
+            </h3>
+            <p style="margin-bottom: 1.5rem; opacity: 0.9;">
+                For emergencies or immediate danger, contact emergency services:
+            </p>
+            <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                <div>
+                    <h4 style="margin: 0; font-size: 1.5rem;">911</h4>
+                    <p style="margin: 0.5rem 0 0; opacity: 0.9;">Emergency Services</p>
+                </div>
+                <div>
+                    <h4 style="margin: 0; font-size: 1.5rem;">(555) 123-4567</h4>
+                    <p style="margin: 0.5rem 0 0; opacity: 0.9;">City Maintenance Hotline</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

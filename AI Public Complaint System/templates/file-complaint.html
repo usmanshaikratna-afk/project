@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Complaint - AI Complaint System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: #2563eb !important;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #4b5563 !important;
+            margin: 0 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #2563eb !important;
+        }
+
+        /* Page Header with Animation */
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            margin-top: 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23f8fafc" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,170.7C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: -2rem auto 2rem;
+            max-width: 800px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            position: relative;
+            z-index: 10;
+            transform: translateY(-50%);
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .step-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .step-item:hover .step-number {
+            transform: scale(1.1);
+        }
+
+        .step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 25px;
+            right: -50%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #e5e7eb, #2563eb);
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        .step-item.active:not(:last-child)::after {
+            background: linear-gradient(90deg, #2563eb, #10b981);
+            opacity: 1;
+        }
+
+        .step-item.completed:not(:last-child)::after {
+            background: #10b981;
+            opacity: 1;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin: 0 auto 0.5rem;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .step-item.active .step-number {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 5px rgba(37,99,235,0.2);
+        }
+
+        .step-item.completed .step-number {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+            box-shadow: 0 0 0 5px rgba(16,185,129,0.2);
+        }
+
+        .step-label {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .step-item.active .step-label {
+            color: #2563eb;
+            font-weight: 700;
+        }
+
+        /* Form Container */
+        .form-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.15);
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header::before {
+            content: '📝';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            font-size: 200px;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+
+        .form-header h2 {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .form-body {
+            padding: 2.5rem;
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 2px solid #f0f2f5;
+            transition: all 0.3s;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+
+        .section-title:hover {
+            background: #e5e7eb;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+
+        .section-title h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .section-title p {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        /* Form Controls */
+        .form-label {
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label i {
+            color: #2563eb;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 0.9rem 1.2rem;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Character Counter */
+        .char-counter {
+            text-align: right;
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+
+        .char-counter.warning {
+            color: #f59e0b;
+        }
+
+        .char-counter.danger {
+            color: #ef4444;
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 3px dashed #e5e7eb;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8fafc;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload-area::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(37,99,235,0.05), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .file-upload-area:hover {
+            border-color: #2563eb;
+            background: rgba(37,99,235,0.05);
+            transform: scale(1.02);
+        }
+
+        .file-upload-area i {
+            font-size: 4rem;
+            color: #2563eb;
+            margin-bottom: 1rem;
+        }
+
+        .file-list {
+            margin-top: 1.5rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            animation: slideInRight 0.3s ease;
+            border-left: 4px solid #2563eb;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .file-item i.fa-file {
+            color: #2563eb;
+        }
+
+        .file-item .remove-file {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-item .remove-file:hover {
+            transform: scale(1.2);
+            color: #dc2626 !important;
+        }
+
+        /* AI Analysis Panel */
+        .ai-analysis-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 10px 30px rgba(102,126,234,0.3); }
+            50% { box-shadow: 0 20px 50px rgba(102,126,234,0.5); }
+        }
+
+        .ai-analysis-panel::before {
+            content: '🤖';
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            font-size: 150px;
+            opacity: 0.1;
+            transform: rotate(-10deg);
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .ai-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-right: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .analysis-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.2rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.25);
+        }
+
+        .analysis-label {
+            display: block;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .analysis-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .badge-high, .badge-medium, .badge-low {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .badge-high {
+            background: #ef4444;
+            color: white;
+        }
+
+        .badge-medium {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .badge-low {
+            background: #10b981;
+            color: white;
+        }
+
+        .confidence-bar {
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #f59e0b);
+            border-radius: 5px;
+            transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Action Buttons */
+        .btn {
+            padding: 1rem 2rem;
+            font-weight: 600;
+            border-radius: 15px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #e5e7eb;
+            color: #4b5563;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #f8fafc;
+            border-color: #2563eb;
+            color: #2563eb;
+            transform: translateY(-3px);
+        }
+
+        /* Success Modal */
+        .success-modal .modal-content {
+            border-radius: 30px;
+            overflow: hidden;
+            border: none;
+        }
+
+        .success-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-header::before {
+            content: '✓';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            font-size: 200px;
+            opacity: 0.1;
+            color: white;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin: 0 auto 1.5rem;
+            animation: successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes successPop {
+            0% {
+                transform: scale(0) rotate(-180deg);
+            }
+            100% {
+                transform: scale(1) rotate(0);
+            }
+        }
+
+        .complaint-id-display {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 2rem 0;
+            border: 3px dashed #2563eb;
+        }
+
+        .complaint-id-display .label {
+            display: block;
+            font-size: 1rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .complaint-id-display .id {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #2563eb;
+            letter-spacing: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Loading Spinner */
+        .spinner-custom {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .progress-steps {
+                flex-direction: column;
+                gap: 1.5rem;
+                border-radius: 20px;
+                padding: 1.5rem;
+            }
+            
+            .step-item:not(:last-child)::after {
+                display: none;
+            }
+            
+            .step-item {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .step-number {
+                margin: 0;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .complaint-id-display .id {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-robot me-2"></i>
+                AI Complaint System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/file-complaint">File Complaint</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/track">Track</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-pen me-3"></i>File a Complaint</h1>
+            <p>Your voice matters - Let us know about the issue and our AI will automatically analyze and route it to the right department</p>
+        </div>
+    </section>
+
+    <!-- Progress Steps -->
+    <div class="container">
+        <div class="progress-steps">
+            <div class="step-item active" id="step1" onclick="goToStep(1)">
+                <div class="step-number">1</div>
+                <div class="step-label">Personal Info</div>
+            </div>
+            <div class="step-item" id="step2" onclick="goToStep(2)">
+                <div class="step-number">2</div>
+                <div class="step-label">Complaint Details</div>
+            </div>
+            <div class="step-item" id="step3" onclick="goToStep(3)">
+                <div class="step-number">3</div>
+                <div class="step-label">AI Analysis</div>
+            </div>
+            <div class="step-item" id="step4" onclick="goToStep(4)">
+                <div class="step-number">4</div>
+                <div class="step-label">Confirmation</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Submit Your Complaint</h2>
+            <p>All fields marked with <span class="text-danger">*</span> are required</p>
+        </div>
+        
+        <div class="form-body">
+            <form id="complaintForm">
+                <!-- Step 1: Personal Information -->
+                <div class="form-section step-content" id="step1-content">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h3>Personal Information</h3>
+                            <p>Tell us who you are</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-user-circle"></i>
+                                Full Name <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="name" 
+                                   placeholder="Enter your full name" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                Email Address <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" class="form-control" id="email" 
+                                   placeholder="your@email.com" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-phone"></i>
+                                Phone Number
+                            </label>
+                            <input type="tel" class="form-control" id="phone" 
+                                   placeholder="+1 234 567 890">
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+                            Next <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Complaint Details -->
+                <div class="form-section step-content" id="step2-content" style="display: none;">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div>
+                            <h3>Complaint Details</h3>
+                            <p>Describe the issue you're facing</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-tag"></i>
+                                Complaint Type
+                            </label>
+                            <select class="form-select" id="complaintType">
+                                <option value="">Let AI detect automatically</option>
+                                <option value="Road">🛣️ Road Issue</option>
+                                <option value="Water">💧 Water Supply</option>
+                                <option value="Waste">🗑️ Waste Management</option>
+                                <option value="Streetlight">💡 Streetlight</option>
+                                <option value="Safety">🛡️ Public Safety</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Location <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="location" 
+                                   placeholder="e.g., Main Street, near Central Park" required>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-align-left"></i>
+                                Complaint Description <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" id="complaintText" rows="6" 
+                                      placeholder="Please describe the issue in detail..." 
+                                      required minlength="20"></textarea>
+                            <div class="char-counter" id="charCounter">
+                                <span id="currentChars">0</span>/500 characters
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            Upload Evidence (Photos/Videos)
+                        </label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h5>Click to upload or drag and drop</h5>
+                            <p class="text-muted">Max 5 files, 10MB each</p>
+                            <input type="file" id="fileInput" multiple accept="image/*,video/*" style="display: none;">
+                            <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-folder-open me-2"></i>Browse Files
+                            </button>
+                        </div>
+                        <div class="file-list" id="fileList"></div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-outline-secondary" onclick="prevStep(1)">
+                            <i class="fas fa-arrow-left me-2"></i>Previous
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="analyzeAndNext()">
+                            Analyze with AI <i class="fas fa-robot ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: AI Analysis -->
+                <div class="form-section step-content" id="step3-content" style="display: none;">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <h3>AI Analysis Results</h3>
+                            <p>Our AI has analyzed your complaint</p>
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="analysisLoading" class="text-center py-5">
+                        <div class="spinner-custom"></div>
+                        <h5 class="mt-4">AI is analyzing your complaint...</h5>
+                        <p class="text-muted">Please wait while we process your request</p>
+                        <div class="progress mt-3" style="height: 6px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 style="width: 100%; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Results -->
+                    <div id="analysisResults" style="display: none;">
+                        <div class="ai-analysis-panel">
+                            <div class="ai-header">
+                                <div class="ai-icon">
+                                    <i class="fas fa-microchip"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-1">Deep Learning Analysis</h4>
+                                    <p class="mb-0" style="opacity: 0.9;">Powered by advanced NLP algorithms</p>
+                                </div>
+                            </div>
+
+                            <div class="analysis-grid">
+                                <div class="analysis-card">
+                                    <span class="analysis-label">Category</span>
+                                    <span class="analysis-value" id="aiCategory">-</span>
+                                </div>
+                                <div class="analysis-card">
+                                    <span class="analysis-label">Priority</span>
+                                    <div id="aiPriority"></div>
+                                </div>
+                                <div class="analysis-card">
+                                    <span class="analysis-label">Confidence</span>
+                                    <span class="analysis-value" id="aiConfidence">-</span>
+                                </div>
+                                <div class="analysis-card">
+                                    <span class="analysis-label">Sentiment</span>
+                                    <span class="analysis-value" id="aiSentiment">-</span>
+                                </div>
+                            </div>
+
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold"><i class="fas fa-tags me-2"></i>Detected Keywords</h6>
+                                    <div id="aiKeywords" class="d-flex flex-wrap gap-2 mt-2"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold"><i class="fas fa-building me-2"></i>Assigned Department</h6>
+                                    <div class="alert alert-light bg-white bg-opacity-25 text-white border-0 mt-2" 
+                                         id="aiDepartment" style="background: rgba(255,255,255,0.2) !important;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            You can go back to edit your complaint if the AI analysis doesn't match your expectations.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-outline-secondary" onclick="prevStep(2)">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Edit
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(4)" id="proceedBtn" disabled>
+                            Proceed to Confirmation <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Confirmation -->
+                <div class="form-section step-content" id="step4-content" style="display: none;">
+                    <div class="section-title">
+                        <div class="section-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <h3>Review & Confirm</h3>
+                            <p>Please review your complaint before submitting</p>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-light border-0 py-3">
+                            <h6 class="mb-0"><i class="fas fa-user me-2 text-primary"></i>Personal Information</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4"><strong>Name:</strong> <span id="confirmName"></span></div>
+                                <div class="col-md-4"><strong>Email:</strong> <span id="confirmEmail"></span></div>
+                                <div class="col-md-4"><strong>Phone:</strong> <span id="confirmPhone"></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-light border-0 py-3">
+                            <h6 class="mb-0"><i class="fas fa-exclamation-circle me-2 text-warning"></i>Complaint Details</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6"><strong>Location:</strong> <span id="confirmLocation"></span></div>
+                                <div class="col-12 mt-3">
+                                    <strong>Description:</strong>
+                                    <p class="mt-2 p-3 bg-light rounded" id="confirmDescription"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-light border-0 py-3">
+                            <h6 class="mb-0"><i class="fas fa-robot me-2 text-info"></i>AI Analysis Results</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4"><strong>Category:</strong> <span id="confirmCategory"></span></div>
+                                <div class="col-md-4"><strong>Priority:</strong> <span id="confirmPriority"></span></div>
+                                <div class="col-md-4"><strong>Department:</strong> <span id="confirmDept"></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                        <label class="form-check-label" for="agreeTerms">
+                            I confirm that the information provided is true and accurate to the best of my knowledge.
+                        </label>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary" onclick="prevStep(3)">
+                            <i class="fas fa-arrow-left me-2"></i>Back
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                            <i class="fas fa-paper-plane me-2"></i>Submit Complaint
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade success-modal" id="successModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="success-header">
+                    <div class="success-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h3>Complaint Submitted Successfully!</h3>
+                    <p class="mb-0 opacity-75">Your complaint has been registered in our system</p>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="complaint-id-display">
+                        <span class="label">Your Complaint ID</span>
+                        <div class="id" id="modalComplaintId">CMP2401151234</div>
+                    </div>
+
+                    <h6 class="fw-bold mt-4">What happens next?</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            AI analysis complete - Category and priority assigned
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Complaint routed to appropriate department
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-envelope text-info me-2"></i>
+                            You'll receive updates via email/SMS
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-clock text-warning me-2"></i>
+                            Expected resolution: 3-5 business days
+                        </li>
+                    </ul>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Please save your Complaint ID to track the status
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="/track" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Track Complaint
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="resetForm()">
+                        <i class="fas fa-plus me-2"></i>File Another
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentStep = 1;
+        let uploadedFiles = [];
+        let aiAnalysisData = null;
+
+        // Character counter
+        document.getElementById('complaintText').addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('currentChars').textContent = count;
+            const counter = document.querySelector('.char-counter');
+            
+            counter.classList.remove('warning', 'danger');
+            if (count > 450) {
+                counter.classList.add('warning');
+            }
+            if (count > 490) {
+                counter.classList.add('danger');
+            }
+        });
+
+        // Step navigation
+        function nextStep(step) {
+            if (validateStep(currentStep)) {
+                document.getElementById(`step${currentStep}-content`).style.display = 'none';
+                document.getElementById(`step${step}-content`).style.display = 'block';
+                
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                document.getElementById(`step${step}`).classList.add('active');
+                
+                if (step > currentStep) {
+                    for (let i = currentStep; i < step; i++) {
+                        document.getElementById(`step${i}`).classList.add('completed');
+                    }
+                }
+                
+                currentStep = step;
+                
+                if (step === 4) {
+                    populateConfirmation();
+                }
+            }
+        }
+
+        function prevStep(step) {
+            document.getElementById(`step${currentStep}-content`).style.display = 'none';
+            document.getElementById(`step${step}-content`).style.display = 'block';
+            
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            currentStep = step;
+        }
+
+        function goToStep(step) {
+            // Only allow going to completed steps or current step
+            if (step <= currentStep || document.getElementById(`step${step}`).classList.contains('completed')) {
+                document.getElementById(`step${currentStep}-content`).style.display = 'none';
+                document.getElementById(`step${step}-content`).style.display = 'block';
+                
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                document.getElementById(`step${step}`).classList.add('active');
+                
+                currentStep = step;
+            }
+        }
+
+        function validateStep(step) {
+            if (step === 1) {
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                
+                if (!name) {
+                    showError('Please enter your name');
+                    return false;
+                }
+                if (!email || !isValidEmail(email)) {
+                    showError('Please enter a valid email address');
+                    return false;
+                }
+                return true;
+            }
+            if (step === 2) {
+                const location = document.getElementById('location').value;
+                const complaint = document.getElementById('complaintText').value;
+                
+                if (!location) {
+                    showError('Please enter the location');
+                    return false;
+                }
+                if (!complaint || complaint.length < 20) {
+                    showError('Please enter a detailed complaint (minimum 20 characters)');
+                    return false;
+                }
+                return true;
+            }
+            return true;
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showError(message) {
+            // You can enhance this with a toast notification
+            alert(message);
+        }
+
+        // File upload handling
+        document.getElementById('fileUploadArea').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileUploadArea').addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#2563eb';
+            this.style.background = 'rgba(37,99,235,0.05)';
+        });
+
+        document.getElementById('fileUploadArea').addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#e5e7eb';
+            this.style.background = '#f8fafc';
+        });
+
+        document.getElementById('fileUploadArea').addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#e5e7eb';
+            this.style.background = '#f8fafc';
+            
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            
+            files.forEach(file => {
+                if (uploadedFiles.length >= 5) {
+                    showError('Maximum 5 files allowed');
+                    return;
+                }
+                
+                if (file.size > maxSize) {
+                    showError(`File ${file.name} exceeds 10MB limit`);
+                    return;
+                }
+                
+                uploadedFiles.push(file);
+                displayFile(file);
+            });
+        }
+
+        function displayFile(file) {
+            const fileList = document.getElementById('fileList');
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileIcon = file.type.startsWith('image/') ? 'fa-image' : 'fa-video';
+            const fileSize = (file.size / 1024 / 1024).toFixed(2);
+            
+            fileItem.innerHTML = `
+                <span>
+                    <i class="fas ${fileIcon} me-2 text-primary"></i>
+                    ${file.name} (${fileSize} MB)
+                </span>
+                <i class="fas fa-times text-danger remove-file" onclick="removeFile('${file.name}')"></i>
+            `;
+            
+            fileList.appendChild(fileItem);
+        }
+
+        function removeFile(fileName) {
+            uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
+            document.querySelectorAll('.file-item').forEach(item => {
+                if (item.innerHTML.includes(fileName)) {
+                    item.remove();
+                }
+            });
+        }
+
+        // AI Analysis
+        function analyzeAndNext() {
+            if (validateStep(2)) {
+                document.getElementById('step2-content').style.display = 'none';
+                document.getElementById('step3-content').style.display = 'block';
+                
+                document.getElementById('step2').classList.add('completed');
+                document.getElementById('step3').classList.add('active');
+                document.getElementById('step2').classList.remove('active');
+                
+                currentStep = 3;
+                
+                // Simulate AI analysis
+                document.getElementById('analysisLoading').style.display = 'block';
+                document.getElementById('analysisResults').style.display = 'none';
+                
+                setTimeout(() => {
+                    document.getElementById('analysisLoading').style.display = 'none';
+                    document.getElementById('analysisResults').style.display = 'block';
+                    
+                    // Mock AI results
+                    const complaintText = document.getElementById('complaintText').value;
+                    
+                    // Enhanced AI analysis with sentiment and keywords
+                    const categories = ['Road', 'Water', 'Waste', 'Streetlight', 'Safety'];
+                    const priorities = ['High', 'Medium', 'Low'];
+                    const sentiments = ['Very Negative', 'Negative', 'Neutral', 'Positive'];
+                    
+                    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                    const randomPriority = priorities[Math.floor(Math.random() * priorities.length)];
+                    const randomSentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
+                    const confidence = Math.floor(75 + Math.random() * 20);
+                    
+                    // Extract keywords (simplified)
+                    const words = complaintText.toLowerCase().split(' ');
+                    const stopWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for'];
+                    const keywords = [...new Set(words.filter(w => w.length > 4 && !stopWords.includes(w)))].slice(0, 5);
+                    
+                    aiAnalysisData = {
+                        category: randomCategory,
+                        priority: randomPriority,
+                        confidence: confidence,
+                        sentiment: randomSentiment,
+                        keywords: keywords,
+                        department: getDepartment(randomCategory)
+                    };
+                    
+                    displayAnalysisResults();
+                }, 2500);
+            }
+        }
+
+        function getDepartment(category) {
+            const departments = {
+                'Road': 'Public Works Department',
+                'Water': 'Water Supply Department',
+                'Waste': 'Sanitation Department',
+                'Streetlight': 'Electricity Department',
+                'Safety': 'Police Department'
+            };
+            return departments[category] || 'General Administration';
+        }
+
+        function displayAnalysisResults() {
+            document.getElementById('aiCategory').textContent = aiAnalysisData.category;
+            
+            const prioritySpan = document.getElementById('aiPriority');
+            prioritySpan.innerHTML = `<span class="badge-${aiAnalysisData.priority.toLowerCase()}">${aiAnalysisData.priority}</span>`;
+            
+            document.getElementById('aiConfidence').textContent = aiAnalysisData.confidence + '%';
+            document.getElementById('confidenceFill').style.width = aiAnalysisData.confidence + '%';
+            document.getElementById('aiSentiment').textContent = aiAnalysisData.sentiment;
+            document.getElementById('aiDepartment').textContent = aiAnalysisData.department;
+            
+            // Display keywords
+            const keywordsContainer = document.getElementById('aiKeywords');
+            keywordsContainer.innerHTML = '';
+            aiAnalysisData.keywords.forEach(keyword => {
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-light text-dark p-2';
+                badge.innerHTML = `<i class="fas fa-hashtag me-1"></i>${keyword}`;
+                keywordsContainer.appendChild(badge);
+            });
+            
+            document.getElementById('proceedBtn').disabled = false;
+        }
+
+        // Confirmation page
+        function populateConfirmation() {
+            document.getElementById('confirmName').textContent = document.getElementById('name').value;
+            document.getElementById('confirmEmail').textContent = document.getElementById('email').value;
+            document.getElementById('confirmPhone').textContent = document.getElementById('phone').value || 'Not provided';
+            document.getElementById('confirmLocation').textContent = document.getElementById('location').value;
+            document.getElementById('confirmDescription').textContent = document.getElementById('complaintText').value;
+            
+            if (aiAnalysisData) {
+                document.getElementById('confirmCategory').textContent = aiAnalysisData.category;
+                document.getElementById('confirmPriority').innerHTML = `<span class="badge-${aiAnalysisData.priority.toLowerCase()}">${aiAnalysisData.priority}</span>`;
+                document.getElementById('confirmDept').textContent = aiAnalysisData.department;
+            }
+        }
+
+        // Form submission
+        document.getElementById('complaintForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!document.getElementById('agreeTerms').checked) {
+                showError('Please agree to the terms and conditions');
+                return;
+            }
+            
+            // Generate complaint ID
+            const date = new Date();
+            const complaintId = 'CMP' + date.getFullYear().toString().slice(-2) + 
+                               ('0' + (date.getMonth() + 1)).slice(-2) + 
+                               ('0' + date.getDate()).slice(-2) + 
+                               Math.floor(1000 + Math.random() * 9000);
+            
+            document.getElementById('modalComplaintId').textContent = complaintId;
+            
+            // Show success modal
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        });
+
+        document.getElementById('agreeTerms').addEventListener('change', function() {
+            document.getElementById('submitBtn').disabled = !this.checked;
+        });
+
+        function resetForm() {
+            document.getElementById('complaintForm').reset();
+            uploadedFiles = [];
+            document.getElementById('fileList').innerHTML = '';
+            aiAnalysisData = null;
+            currentStep = 1;
+            
+            document.getElementById('step1-content').style.display = 'block';
+            document.getElementById('step2-content').style.display = 'none';
+            document.getElementById('step3-content').style.display = 'none';
+            document.getElementById('step4-content').style.display = 'none';
+            
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('step2').classList.remove('active', 'completed');
+            document.getElementById('step3').classList.remove('active', 'completed');
+            document.getElementById('step4').classList.remove('active', 'completed');
+            
+            document.getElementById('currentChars').textContent = '0';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Complaints - AI Complaint System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: #2563eb !important;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #4b5563 !important;
+            margin: 0 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #2563eb !important;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6rem 0 3rem;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 2rem 0;
+        }
+
+        .search-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: -3rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-container .input-group {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .search-container .form-control {
+            border: 2px solid #e5e7eb;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .search-container .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: none;
+        }
+
+        .search-container .btn {
+            padding: 1rem 2rem;
+            font-weight: 600;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            padding: 1rem 0 2rem;
+        }
+
+        .filters-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .form-select {
+            border: 2px solid #e5e7eb;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        /* Complaints List */
+        .complaints-list-section {
+            padding: 2rem 0;
+        }
+
+        .complaint-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .complaint-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .complaint-card.priority-high {
+            border-left-color: #dc2626;
+        }
+
+        .complaint-card.priority-medium {
+            border-left-color: #d97706;
+        }
+
+        .complaint-card.priority-low {
+            border-left-color: #059669;
+        }
+
+        .complaint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .complaint-id {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .complaint-date {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .complaint-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+        }
+
+        .complaint-desc {
+            color: #6b7280;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .complaint-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: #f3f4f6;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+        }
+
+        /* Progress Bar */
+        .progress-tracker {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #9ca3af;
+            position: relative;
+        }
+
+        .step.active {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .step.completed {
+            color: #10b981;
+        }
+
+        .progress {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: #2563eb;
+            transition: width 0.3s;
+        }
+
+        /* Pagination */
+        .pagination-section {
+            padding: 2rem 0;
+        }
+
+        .pagination {
+            gap: 0.5rem;
+        }
+
+        .page-link {
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            color: #4b5563;
+            font-weight: 500;
+        }
+
+        .page-item.active .page-link {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* Modal Styles */
+        .timeline {
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: 0;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .timeline-content h6 {
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .timeline-content p {
+            margin-bottom: 0.25rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .timeline-content small {
+            color: #9ca3af;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .complaint-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .complaint-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-robot me-2"></i>
+                AI Complaint System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/track">Track</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Track Complaints</h1>
+            <p>Search and monitor the status of your complaints in real-time</p>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="searchInput" 
+                                   placeholder="Enter Complaint ID or Email Address">
+                            <button class="btn btn-primary" type="button" onclick="searchComplaints()">
+                                <i class="fas fa-search me-2"></i>Search
+                            </button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Enter your complaint ID (e.g., CMP1234) or email address
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-container">
+                <div class="row align-items-center">
+                    <div class="col-md-3 mb-2 mb-md-0">
+                        <select class="form-select" id="filterStatus" onchange="applyFilters()">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2 mb-md-0">
+                        <select class="form-select" id="filterPriority" onchange="applyFilters()">
+                            <option value="all">All Priorities</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2 mb-md-0">
+                        <select class="form-select" id="filterCategory" onchange="applyFilters()">
+                            <option value="all">All Categories</option>
+                            <option value="road">Road</option>
+                            <option value="water">Water</option>
+                            <option value="waste">Waste</option>
+                            <option value="streetlight">Streetlight</option>
+                            <option value="safety">Safety</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="sortBy" onchange="applyFilters()">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="priority">Priority (High to Low)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Complaints List -->
+    <section class="complaints-list-section">
+        <div class="container">
+            <div class="row" id="complaintsList">
+                <!-- Complaint Card 1 -->
+                <div class="col-12 complaint-item" data-status="pending" data-priority="high" data-category="road">
+                    <div class="complaint-card priority-high" onclick="viewComplaint('CMP1234')">
+                        <div class="complaint-header">
+                            <div>
+                                <span class="complaint-id">#CMP1234</span>
+                                <span class="badge bg-warning text-dark ms-2">Pending</span>
+                            </div>
+                            <span class="complaint-date"><i class="far fa-calendar me-1"></i>2024-01-15</span>
+                        </div>
+                        <h5 class="complaint-title">Road damage with potholes</h5>
+                        <p class="complaint-desc">Multiple potholes on Main Street near Central Park causing traffic hazards...</p>
+                        <div class="complaint-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-tag"></i> Road
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-exclamation-triangle text-danger"></i> High Priority
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-building"></i> PWD
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i> Main Street
+                            </span>
+                        </div>
+                        
+                        <!-- Progress Tracker -->
+                        <div class="progress-tracker">
+                            <div class="progress-steps">
+                                <span class="step completed">Submitted</span>
+                                <span class="step active">In Review</span>
+                                <span class="step">In Progress</span>
+                                <span class="step">Resolved</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 40%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complaint Card 2 -->
+                <div class="col-12 complaint-item" data-status="in-progress" data-priority="medium" data-category="water">
+                    <div class="complaint-card priority-medium" onclick="viewComplaint('CMP1235')">
+                        <div class="complaint-header">
+                            <div>
+                                <span class="complaint-id">#CMP1235</span>
+                                <span class="badge bg-info text-white ms-2">In Progress</span>
+                            </div>
+                            <span class="complaint-date"><i class="far fa-calendar me-1"></i>2024-01-15</span>
+                        </div>
+                        <h5 class="complaint-title">No water supply in Sector 7</h5>
+                        <p class="complaint-desc">Water supply disrupted for the last 3 days in Sector 7, Colony Area...</p>
+                        <div class="complaint-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-tag"></i> Water
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-exclamation-triangle text-warning"></i> Medium Priority
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-building"></i> Water Dept
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i> Sector 7
+                            </span>
+                        </div>
+                        
+                        <!-- Progress Tracker -->
+                        <div class="progress-tracker">
+                            <div class="progress-steps">
+                                <span class="step completed">Submitted</span>
+                                <span class="step completed">In Review</span>
+                                <span class="step active">In Progress</span>
+                                <span class="step">Resolved</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complaint Card 3 -->
+                <div class="col-12 complaint-item" data-status="resolved" data-priority="low" data-category="waste">
+                    <div class="complaint-card priority-low" onclick="viewComplaint('CMP1236')">
+                        <div class="complaint-header">
+                            <div>
+                                <span class="complaint-id">#CMP1236</span>
+                                <span class="badge bg-success text-white ms-2">Resolved</span>
+                            </div>
+                            <span class="complaint-date"><i class="far fa-calendar me-1"></i>2024-01-14</span>
+                        </div>
+                        <h5 class="complaint-title">Garbage not collected for weeks</h5>
+                        <p class="complaint-desc">Garbage bins overflowing at Market Complex, foul smell causing health issues...</p>
+                        <div class="complaint-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-tag"></i> Waste
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-exclamation-triangle text-success"></i> Low Priority
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-building"></i> Sanitation
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i> Market Complex
+                            </span>
+                        </div>
+                        
+                        <!-- Progress Tracker -->
+                        <div class="progress-tracker">
+                            <div class="progress-steps">
+                                <span class="step completed">Submitted</span>
+                                <span class="step completed">In Review</span>
+                                <span class="step completed">In Progress</span>
+                                <span class="step completed">Resolved</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complaint Card 4 -->
+                <div class="col-12 complaint-item" data-status="pending" data-priority="high" data-category="streetlight">
+                    <div class="complaint-card priority-high" onclick="viewComplaint('CMP1237')">
+                        <div class="complaint-header">
+                            <div>
+                                <span class="complaint-id">#CMP1237</span>
+                                <span class="badge bg-warning text-dark ms-2">Pending</span>
+                            </div>
+                            <span class="complaint-date"><i class="far fa-calendar me-1"></i>2024-01-14</span>
+                        </div>
+                        <h5 class="complaint-title">Street lights not working</h5>
+                        <p class="complaint-desc">All street lights on Park Avenue not working for a month, dark at night...</p>
+                        <div class="complaint-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-tag"></i> Streetlight
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-exclamation-triangle text-danger"></i> High Priority
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-building"></i> Electricity
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i> Park Avenue
+                            </span>
+                        </div>
+                        
+                        <!-- Progress Tracker -->
+                        <div class="progress-tracker">
+                            <div class="progress-steps">
+                                <span class="step completed">Submitted</span>
+                                <span class="step active">In Review</span>
+                                <span class="step">In Progress</span>
+                                <span class="step">Resolved</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 30%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complaint Card 5 -->
+                <div class="col-12 complaint-item" data-status="in-progress" data-priority="medium" data-category="safety">
+                    <div class="complaint-card priority-medium" onclick="viewComplaint('CMP1238')">
+                        <div class="complaint-header">
+                            <div>
+                                <span class="complaint-id">#CMP1238</span>
+                                <span class="badge bg-info text-white ms-2">In Progress</span>
+                            </div>
+                            <span class="complaint-date"><i class="far fa-calendar me-1"></i>2024-01-13</span>
+                        </div>
+                        <h5 class="complaint-title">Suspicious activities reported</h5>
+                        <p class="complaint-desc">Suspicious persons loitering near school area during evening hours...</p>
+                        <div class="complaint-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-tag"></i> Safety
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-exclamation-triangle text-warning"></i> Medium Priority
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-building"></i> Police
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i> School Area
+                            </span>
+                        </div>
+                        
+                        <!-- Progress Tracker -->
+                        <div class="progress-tracker">
+                            <div class="progress-steps">
+                                <span class="step completed">Submitted</span>
+                                <span class="step completed">In Review</span>
+                                <span class="step active">In Progress</span>
+                                <span class="step">Resolved</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pagination -->
+    <section class="pagination-section">
+        <div class="container">
+            <nav aria-label="Complaints pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">4</a></li>
+                    <li class="page-item"><a class="page-link" href="#">5</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Complaint Details Modal -->
+    <div class="modal fade" id="complaintModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Complaint Details #<span id="modalComplaintId">CMP1234</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Citizen Information</h6>
+                            <p><strong>Name:</strong> John Doe<br>
+                            <strong>Email:</strong> john@example.com<br>
+                            <strong>Phone:</strong> +1 234 567 890</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Complaint Information</h6>
+                            <p><strong>Category:</strong> Road<br>
+                            <strong>Priority:</strong> <span class="badge bg-danger">High</span><br>
+                            <strong>Status:</strong> <span class="badge bg-warning text-dark">Pending</span></p>
+                        </div>
+                    </div>
+                    
+                    <h6 class="fw-bold mt-3">Description</h6>
+                    <p class="bg-light p-3 rounded">Multiple potholes on Main Street near Central Park causing traffic hazards and potential accidents. This has been an issue for over 2 weeks.</p>
+                    
+                    <h6 class="fw-bold mt-3">Location</h6>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>Main Street, near Central Park</p>
+                    
+                    <h6 class="fw-bold mt-3">Timeline</h6>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-icon" style="border-color: #10b981; color: #10b981;">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>Complaint Submitted</h6>
+                                <p>Your complaint has been registered</p>
+                                <small>2024-01-15 09:30 AM</small>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-icon" style="border-color: #2563eb; color: #2563eb;">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>Under Review</h6>
+                                <p>AI analysis complete. Assigned to PWD</p>
+                                <small>2024-01-15 09:35 AM</small>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-icon" style="border-color: #9ca3af; color: #9ca3af;">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>In Progress</h6>
+                                <p>Department has started working on the issue</p>
+                                <small>Pending</small>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-icon" style="border-color: #9ca3af; color: #9ca3af;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>Resolved</h6>
+                                <p>Complaint resolved and closed</p>
+                                <small>Pending</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Search function
+        function searchComplaints() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const complaints = document.querySelectorAll('.complaint-item');
+            
+            complaints.forEach(complaint => {
+                const complaintId = complaint.querySelector('.complaint-id').textContent.toLowerCase();
+                if (complaintId.includes(searchTerm) || searchTerm === '') {
+                    complaint.style.display = 'block';
+                } else {
+                    complaint.style.display = 'none';
+                }
+            });
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const status = document.getElementById('filterStatus').value;
+            const priority = document.getElementById('filterPriority').value;
+            const category = document.getElementById('filterCategory').value;
+            
+            const complaints = document.querySelectorAll('.complaint-item');
+            
+            complaints.forEach(complaint => {
+                const complaintStatus = complaint.dataset.status;
+                const complaintPriority = complaint.dataset.priority;
+                const complaintCategory = complaint.dataset.category;
+                
+                let show = true;
+                
+                if (status !== 'all' && complaintStatus !== status) show = false;
+                if (priority !== 'all' && complaintPriority !== priority) show = false;
+                if (category !== 'all' && complaintCategory !== category) show = false;
+                
+                complaint.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        // Sort complaints
+        document.getElementById('sortBy').addEventListener('change', function() {
+            const sortBy = this.value;
+            const container = document.getElementById('complaintsList');
+            const complaints = Array.from(document.querySelectorAll('.complaint-item'));
+            
+            complaints.sort((a, b) => {
+                if (sortBy === 'newest') {
+                    const dateA = new Date(a.querySelector('.complaint-date').textContent.trim());
+                    const dateB = new Date(b.querySelector('.complaint-date').textContent.trim());
+                    return dateB - dateA;
+                } else if (sortBy === 'oldest') {
+                    const dateA = new Date(a.querySelector('.complaint-date').textContent.trim());
+                    const dateB = new Date(b.querySelector('.complaint-date').textContent.trim());
+                    return dateA - dateB;
+                } else if (sortBy === 'priority') {
+                    const priorityOrder = { 'high': 1, 'medium': 2, 'low': 3 };
+                    const priorityA = priorityOrder[a.dataset.priority];
+                    const priorityB = priorityOrder[b.dataset.priority];
+                    return priorityA - priorityB;
+                }
+            });
+            
+            // Reorder DOM
+            complaints.forEach(complaint => container.appendChild(complaint));
+        });
+
+        // View complaint details
+        function viewComplaint(id) {
+            // In real app, fetch complaint details from API
+            document.getElementById('modalComplaintId').textContent = id;
+            new bootstrap.Modal(document.getElementById('complaintModal')).show();
+        }
+
+        // Enter key in search
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                searchComplaints();
+            }
+        });
+
+        // Real-time search as you type
+        let searchTimer;
+        document.getElementById('searchInput').addEventListener('input', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(searchComplaints, 500);
+        });
+    </script>
+</body>
+</html>

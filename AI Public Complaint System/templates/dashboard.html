@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Complaint System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: #2563eb !important;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #4b5563 !important;
+            margin: 0 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #2563eb !important;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6rem 0 3rem;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard-section {
+            padding: 3rem 0;
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .kpi-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-right: 1rem;
+        }
+
+        .kpi-content h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.2rem;
+        }
+
+        .kpi-content p {
+            color: #6b7280;
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        /* Chart Cards */
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background: white;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Table Styles */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table td {
+            vertical-align: middle;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+        }
+
+        .badge.bg-high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .badge.bg-medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .badge.bg-low {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        /* Time Range Selector */
+        .time-range {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .time-range .btn {
+            padding: 0.4rem 1rem;
+            font-size: 0.875rem;
+            border-radius: 8px;
+        }
+
+        .time-range .btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .kpi-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-robot me-2"></i>
+                AI Complaint System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/track">Track</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Analytics Dashboard</h1>
+            <p>Real-time insights and statistics of complaint management system</p>
+        </div>
+    </section>
+
+    <!-- Dashboard Content -->
+    <section class="dashboard-section">
+        <div class="container">
+            <!-- KPI Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>1,234</h3>
+                            <p>Total Complaints</p>
+                            <small class="text-success"><i class="fas fa-arrow-up"></i> +12%</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>456</h3>
+                            <p>Pending</p>
+                            <small class="text-danger"><i class="fas fa-arrow-up"></i> +5%</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>712</h3>
+                            <p>Resolved</p>
+                            <small class="text-success"><i class="fas fa-arrow-up"></i> +18%</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>66</h3>
+                            <p>High Priority</p>
+                            <small class="text-danger"><i class="fas fa-arrow-up"></i> +3%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1 -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h5>Complaint Trends</h5>
+                            <div class="time-range">
+                                <button class="btn btn-outline-primary btn-sm active" onclick="changePeriod('week')">Week</button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="changePeriod('month')">Month</button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="changePeriod('year')">Year</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="trendChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h5>Categories</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoryChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div class="row mt-4">
+                <div class="col-lg-6">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h5>Priority Distribution</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="priorityChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h5>Department Performance</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="deptChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Complaints Table -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h5>Recent Complaints</h5>
+                            <a href="/track" class="btn btn-primary btn-sm">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Citizen</th>
+                                            <th>Category</th>
+                                            <th>Priority</th>
+                                            <th>Status</th>
+                                            <th>Department</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>#CMP1234</strong></td>
+                                            <td>John Doe</td>
+                                            <td>Road</td>
+                                            <td><span class="badge bg-high">High</span></td>
+                                            <td><span class="badge bg-warning text-dark">Pending</span></td>
+                                            <td>PWD</td>
+                                            <td>2024-01-15</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>#CMP1235</strong></td>
+                                            <td>Jane Smith</td>
+                                            <td>Water</td>
+                                            <td><span class="badge bg-medium">Medium</span></td>
+                                            <td><span class="badge bg-info">In Progress</span></td>
+                                            <td>Water Dept</td>
+                                            <td>2024-01-15</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>#CMP1236</strong></td>
+                                            <td>Bob Johnson</td>
+                                            <td>Waste</td>
+                                            <td><span class="badge bg-low">Low</span></td>
+                                            <td><span class="badge bg-success">Resolved</span></td>
+                                            <td>Sanitation</td>
+                                            <td>2024-01-14</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>#CMP1237</strong></td>
+                                            <td>Alice Brown</td>
+                                            <td>Streetlight</td>
+                                            <td><span class="badge bg-high">High</span></td>
+                                            <td><span class="badge bg-warning text-dark">Pending</span></td>
+                                            <td>Electricity</td>
+                                            <td>2024-01-14</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>#CMP1238</strong></td>
+                                            <td>Charlie Wilson</td>
+                                            <td>Safety</td>
+                                            <td><span class="badge bg-medium">Medium</span></td>
+                                            <td><span class="badge bg-info">In Progress</span></td>
+                                            <td>Police</td>
+                                            <td>2024-01-13</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Trend Chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Complaints',
+                        data: [65, 72, 85, 78, 92, 88, 70],
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Category Chart
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Road', 'Water', 'Waste', 'Streetlight', 'Safety'],
+                    datasets: [{
+                        data: [324, 256, 189, 145, 98],
+                        backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Priority Chart
+            const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+            new Chart(priorityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['High', 'Medium', 'Low'],
+                    datasets: [{
+                        label: 'Complaints',
+                        data: [66, 245, 145],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#10b981']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Department Chart
+            const deptCtx = document.getElementById('deptChart').getContext('2d');
+            new Chart(deptCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['PWD', 'Water', 'Sanitation', 'Electricity', 'Police'],
+                    datasets: [{
+                        label: 'Resolved',
+                        data: [85, 92, 78, 88, 95],
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                        borderColor: '#2563eb'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        });
+
+        function changePeriod(period) {
+            // Update active state
+            document.querySelectorAll('.time-range .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update chart data based on period
+            // This would normally fetch new data from API
+        }
+    </script>
+</body>
+</html>
